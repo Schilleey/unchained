@@ -36,6 +36,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'ws4redis',
     'UnchainedMessenger',
 )
 
@@ -50,7 +51,10 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'unchained.urls'
 
-WSGI_APPLICATION = 'unchained.wsgi.application'
+# This setting is required to override the Django's main loop, when running in
+# development mode, such as ./manage runserver
+WSGI_APPLICATION = 'ws4redis.django_runserver.application'
+# WSGI_APPLICATION = 'unchained.wsgi.application'
 
 
 # Database
@@ -75,6 +79,34 @@ TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
 )
+
+# Template context processors
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.contrib.auth.context_processors.auth',
+    'django.core.context_processors.static',
+    'ws4redis.context_processors.default',
+)
+
+SESSION_ENGINE = 'redis_sessions.session'
+
+SESSION_REDIS_PREFIX = 'session'
+
+# These two middleware classes must be present, if messages sent or received through a websocket
+# connection shall be delivered to an authenticated Django user.
+MIDDLEWARE_CLASSES = (
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+)
+
+# URL that distinguishes websocket connections from normal requests
+WEBSOCKET_URL = '/ws/'
+
+# Set the number of seconds each message shall persited
+WS4REDIS_EXPIRE = 3600
+
+WS4REDIS_HEARTBEAT = '--heartbeat--'
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/

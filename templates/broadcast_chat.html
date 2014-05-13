@@ -1,0 +1,24 @@
+{% extends "chat_base.html" %}
+
+{% block script_panel %}
+<script type="text/javascript">
+jQuery(document).ready(function($) {
+	var ws4redis = WS4Redis({
+		uri: '{{ WEBSOCKET_URI }}foobar?subscribe-broadcast&publish-broadcast',
+		receive_message: receiveMessage,
+		heartbeat_msg: {{ WS4REDIS_HEARTBEAT }}
+	});
+
+	// send message though the Websocket to the server
+	$('#send_message').click(function() {
+		var value = $('#text_message').val();
+		ws4redis.send_message(value);
+	});
+
+	// receive a message though the Websocket from the server
+	function receiveMessage(msg) {
+		$('#billboard').append('<br/>' + msg);
+	}
+});
+</script>
+{% endblock %}
