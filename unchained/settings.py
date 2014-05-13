@@ -92,14 +92,6 @@ SESSION_ENGINE = 'redis_sessions.session'
 
 SESSION_REDIS_PREFIX = 'session'
 
-# These two middleware classes must be present, if messages sent or received through a websocket
-# connection shall be delivered to an authenticated Django user.
-MIDDLEWARE_CLASSES = (
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-)
-
 # URL that distinguishes websocket connections from normal requests
 WEBSOCKET_URL = '/ws/'
 
