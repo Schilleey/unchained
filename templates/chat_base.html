@@ -1,32 +1,17 @@
 <html>
 <head>
-	<style>
-		body, input {
-			font-size: 18px;
-			line-height: 25px;
-		}
-		#text_message {
-			margin: 10px;
-			width: 400px;
-			height: 30px;
-			padding: 5px;
-		}
-		#billboard {
-			margin: 10px;
-			padding: 5px;
-			width: 600px;
-			height: 400px;
-			background-color: black;
-			color: white;
-			border: solid 2px green;
-			overflow-y: auto;
-		}
-	</style>
-	<script type="text/javascript" src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+    <link rel="stylesheet" type="text/css" href=" {{ STATIC_URL }}css/unchained.css">
+
+
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap-theme.min.css">
+
+    <script type="text/javascript" src="{{ STATIC_URL }}js//jquery.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
 	<script type="text/javascript" src="{{ STATIC_URL }}js/ws4redis.js"></script>
 </head>
 <body>
-	<h1>Simple chat using django-websocket-redis</h1>
+	<h1>Django Unchained Messenger</h1>
 	{% block control_panel %}
 	<input type="text" id="text_message" />
 	<button id="send_message">Send message</button>

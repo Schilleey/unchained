@@ -1,0 +1,20 @@
+		body, input {
+			font-size: 18px;
+			line-height: 25px;
+		}
+		#text_message {
+			margin: 10px;
+			width: 400px;
+			height: 30px;
+			padding: 5px;
+		}
+		#billboard {
+			margin: 10px;
+			padding: 5px;
+			width: 600px;
+			height: 400px;
+			background-color: black;
+			color: white;
+			border: solid 2px green;
+			overflow-y: auto;
+		}
