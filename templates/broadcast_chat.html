@@ -1,4 +1,17 @@
-{% extends "chat_base.html" %}
+{% extends "base_chat.html" %}
+
+{% block control_panel %}
+
+	<input type="text" id="text_message" />
+	<button id="send_message">Send message</button>
+	to
+	<select id="group">{% for group in groups %}
+		<option value="{{ group.name }}">{{ group.name }}</option>
+	{% endfor %}</select>
+
+    <div id="billboard"></div>
+
+{% endblock control_panel %}
 
 {% block script_panel %}
 <script type="text/javascript">

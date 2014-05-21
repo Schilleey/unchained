@@ -1,6 +1,12 @@
-{% extends "chat_base.html" %}
+{% extends "base_chat.html" %}
+
+
 
 {% block control_panel %}
+
+    <h1>you are talking with {{ username }}</h1>
+
+
 	<input type="text" id="text_message" />
 	<button id="send_message">Send message</button>
 	to

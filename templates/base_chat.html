@@ -1,0 +1,59 @@
+<html>
+<head>
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap-theme.min.css">
+    <link rel="stylesheet" type="text/css" href=" {{ STATIC_URL }}css/unchained.css">
+
+    <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="{{ STATIC_URL }}js/ws4redis.js"></script>
+</head>
+<body>
+
+<div id="wrapper">
+
+        <!-- Sidebar -->
+        <div id="sidebar-wrapper">
+            <ul class="sidebar-nav">
+
+            <li><a href="/unchained/chat"><h3>Home</h3></a></li>
+
+            <li><a href="/unchained/broadcastchat"><h3>Broadcast</h3></a></li>
+                <h3>Groups</h3>
+            {% for group in groups %}
+                <li><a href="/unchained/groupchat?group={{ group.name }}">{{ group.name }}</a></li>
+            {% endfor %}
+
+
+            <h3>UserList</h3>
+            {% for user in users %}
+                <li><a href="/unchained/userchat/?username={{ user.username }}">{{ user.username }}</a></li>
+            {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Page content -->
+        <div id="page-content-wrapper">
+            <div class="content-header">
+
+                <h1>Django Unchained Messenger</h1>
+
+            </div>
+
+            <!-- Keep all page content within the page-content inset div! -->
+            <div class="page-content inset">
+
+                {% block control_panel %}
+
+                {% endblock control_panel %}
+
+                {% block script_panel %}{% endblock %}
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
+</body>
+</html>

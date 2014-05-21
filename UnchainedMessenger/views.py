@@ -1,4 +1,4 @@
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, render
 from django.contrib.auth.models import User, Group
 from django.http import HttpResponse
 from django.views.generic.base import TemplateView
@@ -11,9 +11,29 @@ def index(request):
 
     return render_to_response("index.html")
 
+def test(request, username):
+
+    context={
+        "groups":User.objects.all(),
+        "users":User.objects.all(),
+        "username":username
+    }
+
+    return render(request, 'user_chat.html', context);
+
+class BaseChatView(TemplateView):
+    template_name = 'base_chat.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(BaseChatView,self).get_context_data(**kwargs)
+        context.update(groups=Group.objects.all())
+        context.update(users=User.objects.all())
+        return context
+
 
 class BroadcastChatView(TemplateView):
     template_name = 'broadcast_chat.html'
+
 
     def get(self, request, *args, **kwargs):
         RedisPublisher(facility='foobar', broadcast=True).publish_message('Hello everybody')  # send a welcome message to everybody
@@ -23,9 +43,11 @@ class BroadcastChatView(TemplateView):
 class UserChatView(TemplateView):
     template_name = 'user_chat.html'
 
+
     def get_context_data(self, **kwargs):
         context = super(UserChatView, self).get_context_data(**kwargs)
         context.update(users=User.objects.all())
+        context.update(groups=Group.objects.all())
         return context
 
     @csrf_exempt
@@ -41,6 +63,7 @@ class GroupChatView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(GroupChatView, self).get_context_data(**kwargs)
         context.update(groups=Group.objects.all())
+        context.update(users=User.objects.all())
         return context
 
     @csrf_exempt
