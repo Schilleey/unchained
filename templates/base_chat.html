@@ -21,7 +21,7 @@
             <li><a href="/unchained/broadcastchat"><h3>Broadcast</h3></a></li>
                 <h3>Groups</h3>
             {% for group in groups %}
-                <li><a href="/unchained/groupchat?group={{ group.name }}">{{ group.name }}</a></li>
+                <li><a href="/unchained/groupchat/{{ group.name }}">{{ group.name }}</a></li>
             {% endfor %}
 
 

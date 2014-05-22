@@ -12,7 +12,10 @@ urlpatterns = patterns('',
     url(r'^userchat/$', views.UserChatView.as_view(), name='user_chat'),
 
 
-    url(r'^groupchat(?P<group>[a-zA-Z_0-9]+)/$', views.GroupChatView.as_view(), name='group_chat'),
+    url(r'^groupchat/(?P<group>[a-zA-Z_0-9]+)/$', views.GroupChatView.as_view(), name='group_chat'),
+
+    url(r'^groupchat/$', views.GroupChatView.as_view(), name='group_chat'),
+
     url(r'^broadcastchat/$', views.BroadcastChatView.as_view(), name='broadcast_chat'),
 
 

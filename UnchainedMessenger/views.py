@@ -64,6 +64,7 @@ class GroupChatView(TemplateView):
         context = super(GroupChatView, self).get_context_data(**kwargs)
         context.update(groups=Group.objects.all())
         context.update(users=User.objects.all())
+        print(kwargs)
         return context
 
     @csrf_exempt
