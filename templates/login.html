@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<head>
+    <title>Unchained: Log in</title>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+    <style type="text/css">
+        body{
+            font-family:Arial,Helvetica,sans-serif;
+            font-size: 12px;
+        }
+    </style>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            if({{ redirect }}) {
+                window.setTimeout(function() {
+                    window.location.href = "/unchained/chat/";
+                }, 2000);
+            }
+        });
+    </script>
+</head>
+<body>
+	{{ state }}
+	<form action="/unchained/login/" method="post">
+		{% if next %}
+		<input type="hidden" name="next" value="{{ next }}" />
+		{% endif %}
+		username:
+		<input type="text" name="username" value="{{ username}}" /><br />
+		password:
+		<input type="password" name="password" value="" /><br />
+
+		<input type="submit" value="Log In" />
+	</form>
+</body>
+</html>

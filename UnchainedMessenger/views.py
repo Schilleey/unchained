@@ -1,8 +1,15 @@
 from django.shortcuts import render_to_response, render
-from django.contrib.auth.models import User, Group
 from django.http import HttpResponse
+
+from django.contrib.auth.models import User, Group
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
+
+from django.template import RequestContext
+
 from django.views.generic.base import TemplateView
 from django.views.decorators.csrf import csrf_exempt
+
 from ws4redis.publisher import RedisPublisher
 
 # Create your views here.
@@ -10,6 +17,7 @@ from ws4redis.publisher import RedisPublisher
 def index(request):
 
     return render_to_response("index.html")
+
 
 def test(request, username):
 
@@ -19,9 +27,16 @@ def test(request, username):
         "username":username
     }
 
-    return render(request, 'user_chat.html', context);
+    return render(request, 'user_chat.html', context)
 
-class BaseChatView(TemplateView):
+
+class LoginRequiredMixin(object):
+    @classmethod
+    def as_view(cls):
+        return login_required(super(LoginRequiredMixin, cls).as_view(), redirect_field_name=None)
+
+
+class BaseChatView(LoginRequiredMixin, TemplateView):
     template_name = 'base_chat.html'
 
     def get_context_data(self, **kwargs):
@@ -31,7 +46,7 @@ class BaseChatView(TemplateView):
         return context
 
 
-class BroadcastChatView(TemplateView):
+class BroadcastChatView(LoginRequiredMixin, TemplateView):
     template_name = 'broadcast_chat.html'
 
 
@@ -40,7 +55,7 @@ class BroadcastChatView(TemplateView):
         return super(BroadcastChatView, self).get(request, *args, **kwargs)
 
 
-class UserChatView(TemplateView):
+class UserChatView(LoginRequiredMixin, TemplateView):
     template_name = 'user_chat.html'
 
 
@@ -57,7 +72,7 @@ class UserChatView(TemplateView):
         return HttpResponse('OK')
 
 
-class GroupChatView(TemplateView):
+class GroupChatView(LoginRequiredMixin, TemplateView):
     template_name = 'group_chat.html'
 
     def get_context_data(self, **kwargs):
@@ -72,3 +87,27 @@ class GroupChatView(TemplateView):
         redis_publisher = RedisPublisher(facility='foobar', groups=[request.POST.get('group')])
         redis_publisher.publish_message(request.POST.get('message'))
         return HttpResponse('OK')
+
+
+def login_user(request):
+    state = "Please log in below..."
+    redirect = 0
+    username = password = ''
+    if request.POST:
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            if user.is_active:
+                login(request, user)
+                redirect = 1
+                state = "You're successfully logged in! You will be redirected soon."
+            else:
+                state = "Your account is not active, please contact the site admin."
+        else:
+            state = "Your username and/or password were incorrect."
+
+    return render_to_response('login.html',
+                              {'state':state, 'username': username, 'redirect': redirect},
+                              context_instance=RequestContext(request))

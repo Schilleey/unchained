@@ -51,6 +51,9 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'unchained.urls'
 
+# The URL where requests are redirected for login
+LOGIN_URL = '/unchained/login/'
+
 # This setting is required to override the Django's main loop, when running in
 # development mode, such as ./manage runserver
 WSGI_APPLICATION = 'ws4redis.django_runserver.application'
