@@ -135,3 +135,34 @@
 }
 
 }
+
+#uc_login_wrapper {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 0;
+    padding: 0;
+    width: 450px;
+    height: 280px;
+    border: 1px solid #3c3c3c;
+    box-shadow: 5px 5px 0px #b8b8b8;
+    position: relative;
+}
+
+#uc_login_pic {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 150px;
+    padding: 0;
+    width: 500px;
+    height: 100px;
+}
+
+#uc_login_content {
+    padding: 5px 10px 5px 10px;
+}
+
+#uc_login_header {
+    color: #9acfea;
+    background-color: #3c3c3c;
+    padding: 10px;
+}

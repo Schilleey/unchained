@@ -2,13 +2,14 @@
 <head>
     <title>Unchained: Log in</title>
     <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-    <style type="text/css">
-        body{
-            font-family:Arial,Helvetica,sans-serif;
-            font-size: 12px;
-        }
-    </style>
+
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap-theme.min.css">
+    <link rel="stylesheet" type="text/css" href=" {{ STATIC_URL }}css/unchained.css">
+
     <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
+
     <script type="text/javascript">
         $(document).ready(function() {
             if({{ redirect }}) {
@@ -20,17 +21,27 @@
     </script>
 </head>
 <body>
-	{{ state }}
-	<form action="/unchained/login/" method="post">
-		{% if next %}
-		<input type="hidden" name="next" value="{{ next }}" />
-		{% endif %}
-		username:
-		<input type="text" name="username" value="{{ username}}" /><br />
-		password:
-		<input type="password" name="password" value="" /><br />
-
-		<input type="submit" value="Log In" />
-	</form>
+    <div id="uc_login_pic">
+        <img src="{{ STATIC_URL }}images/broken_chain.png">
+    </div>
+    <div id="uc_login_wrapper">
+        <div id="uc_login_header">
+            <h4>Unchained Log in</h4>
+        </div>
+        <div id="uc_login_content">
+            <h5>{{ state }}</h5>
+            <form action="/unchained/login/" method="post" role="form">
+                {% if next %}
+                <input type="hidden" name="next" value="{{ next }}" />
+                {% endif %}
+                <input type="text" name="username" class="form-control" placeholder="Username" value="{{ username }}" /><br />
+                <input type="password" name="password" class="form-control" placeholder="Password"value="" /><br />
+                <div class="pull-right">
+                    <button type="submit" class="btn btn-default">Log in</button>
+                    <button type="button" class="btn btn-default">Register</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </body>
 </html>
