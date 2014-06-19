@@ -2,7 +2,7 @@
 
 {% block control_panel %}
 
-    <h1>You are talking with {{ chatpartner }} now!</h1>
+    <h1>You are talking with '{{ chatpartner }}' now!</h1>
 
 
 	<input type="text" id="text_message" />
@@ -22,16 +22,29 @@
 
 		// send message to the server using Ajax
 		$('#send_message').click(function() {
-			$.post('{% url "user_chat" %}', {
-				user: $({{ chatuser }}).val(),
-				message:  '{{ username }}' + ': ' + $('#text_message').val()
-			});
+            sendMessage();
 		});
+
+        $('#text_message').keypress(function(e){
+        var code = e.keyCode || e.which;
+        if(code == 13)
+        {
+            sendMessage();
+        }
+        });
 
 		// receive a message though the Websocket from the server
 		function receiveMessage(msg) {
-			$('#billboard').append('<br/>' + {{ username }}+ ':' + msg);
+			$('#billboard').append('<br/>' + msg);
+            $('#text_message').val('');
 		}
+
+       var sendMessage = function(){
+			$.post('{% url "user_chat" %}', {
+				user: '{{ chatpartner }}',
+				message:  '{{ username }}' + ': ' + $('#text_message').val()
+			});
+    }
 	});
 </script>
 {% endblock script_panel %}

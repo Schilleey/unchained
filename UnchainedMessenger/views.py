@@ -53,7 +53,6 @@ class BroadcastChatView(LoginRequiredMixin, TemplateView):
 class UserChatView(LoginRequiredMixin, TemplateView):
     template_name = 'user_chat.html';
 
-
     def get_context_data(self, **kwargs):
         user = self.request.user
         context = super(UserChatView, self).get_context_data(**kwargs)
@@ -65,7 +64,7 @@ class UserChatView(LoginRequiredMixin, TemplateView):
 
     @csrf_exempt
     def post(self, request, *args, **kwargs):
-        redis_publisher = RedisPublisher(facility='foobar', users=[request.POST.get('user')])
+        redis_publisher = RedisPublisher(facility='foobar', users=[request.POST.get('user'),request.user.username])
         redis_publisher.publish_message(request.POST.get('message'))
         return HttpResponse('OK')
 
