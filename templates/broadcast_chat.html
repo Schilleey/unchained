@@ -4,10 +4,7 @@
 
 	<input type="text" id="text_message" />
 	<button id="send_message">Send message</button>
-	to
-	<select id="group">{% for group in groups %}
-		<option value="{{ group.name }}">{{ group.name }}</option>
-	{% endfor %}</select>
+
 
     <div id="billboard"></div>
 
@@ -24,14 +21,27 @@ jQuery(document).ready(function($) {
 
 	// send message though the Websocket to the server
 	$('#send_message').click(function() {
-		var value = $('#text_message').val();
-		ws4redis.send_message(value);
+		sendMessage();
 	});
+
+    $('#text_message').keypress(function(e){
+        var code = e.keyCode || e.which;
+        if(code == 13)
+        {
+            sendMessage();
+        }
+    })
 
 	// receive a message though the Websocket from the server
 	function receiveMessage(msg) {
 		$('#billboard').append('<br/>' + msg);
+        $('#text_message').val('');
 	}
+
+    var sendMessage = function(){
+        var value = '{{ username }}' + ': ' + $('#text_message').val();
+		ws4redis.send_message(value);
+    }
 });
 </script>
 {% endblock %}

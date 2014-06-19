@@ -1,18 +1,14 @@
 {% extends "base_chat.html" %}
 
-
-
 {% block control_panel %}
 
-    <h1>you are talking with {{ username }}</h1>
+    <h1>You are talking with {{ chatpartner }} now!</h1>
 
 
 	<input type="text" id="text_message" />
 	<button id="send_message">Send message</button>
-	to
-	<select id="user">{% for user in users %}
-		<option value="{{ user.username }}">{% firstof user.get_full_name user.username %}</option>
-	{% endfor %}</select>
+    <div id="billboard"></div>
+
 {% endblock control_panel %}
 
 {% block script_panel %}
@@ -27,14 +23,14 @@
 		// send message to the server using Ajax
 		$('#send_message').click(function() {
 			$.post('{% url "user_chat" %}', {
-				user: $('#user').val(),
-				message: $('#text_message').val()
+				user: $({{ chatuser }}).val(),
+				message:  '{{ username }}' + ': ' + $('#text_message').val()
 			});
 		});
 
 		// receive a message though the Websocket from the server
 		function receiveMessage(msg) {
-			$('#billboard').append('<br/>' + msg);
+			$('#billboard').append('<br/>' + {{ username }}+ ':' + msg);
 		}
 	});
 </script>

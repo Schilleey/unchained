@@ -18,51 +18,49 @@ def index(request):
 
     return render_to_response("index.html")
 
-
-def test(request, username):
-
-    context={
-        "groups":User.objects.all(),
-        "users":User.objects.all(),
-        "username":username
-    }
-
-    return render(request, 'user_chat.html', context)
-
-
 class LoginRequiredMixin(object):
     @classmethod
     def as_view(cls):
         return login_required(super(LoginRequiredMixin, cls).as_view(), redirect_field_name=None)
 
-
 class BaseChatView(LoginRequiredMixin, TemplateView):
     template_name = 'base_chat.html'
 
     def get_context_data(self, **kwargs):
+        user = self.request.user
         context = super(BaseChatView,self).get_context_data(**kwargs)
         context.update(groups=Group.objects.all())
-        context.update(users=User.objects.all())
+        context.update(users=User.objects.all().exclude(username=user.username))
         return context
 
 
 class BroadcastChatView(LoginRequiredMixin, TemplateView):
     template_name = 'broadcast_chat.html'
 
-
     def get(self, request, *args, **kwargs):
-        RedisPublisher(facility='foobar', broadcast=True).publish_message('Hello everybody')  # send a welcome message to everybody
+        username = self.request.user.username
+        RedisPublisher(facility='foobar', broadcast=True).publish_message(username + ': ' + 'Hello everybody')  # send a welcome message to everybody
         return super(BroadcastChatView, self).get(request, *args, **kwargs)
 
+    def get_context_data(self, **kwargs):
+        user = self.request.user
+        context = super(BroadcastChatView, self).get_context_data(**kwargs)
+        context.update(users=User.objects.all().exclude(username=user.username))
+        context.update(groups=Group.objects.all())
+        context.update(username=user.username)
+        return context
 
 class UserChatView(LoginRequiredMixin, TemplateView):
-    template_name = 'user_chat.html'
+    template_name = 'user_chat.html';
 
 
     def get_context_data(self, **kwargs):
+        user = self.request.user
         context = super(UserChatView, self).get_context_data(**kwargs)
-        context.update(users=User.objects.all())
+        context.update(users=User.objects.all().exclude(username=user.username))
         context.update(groups=Group.objects.all())
+        context.update(chatpartner=kwargs['chatpartner'])
+        context.update(username=user.username)
         return context
 
     @csrf_exempt
