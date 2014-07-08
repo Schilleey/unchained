@@ -1,6 +1,8 @@
 from django.shortcuts import render_to_response, render
 from django.http import HttpResponse
+from django.http import HttpResponseRedirect
 
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User, Group
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
@@ -108,3 +110,14 @@ def login_user(request):
     return render_to_response('login.html',
                               {'state':state, 'username': username, 'redirect': redirect},
                               context_instance=RequestContext(request))
+
+
+def register(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            new_user = form.save()
+            return HttpResponseRedirect("/login/")
+    else:
+        form = UserCreationForm()
+    return render(request, "register.html", {'form': form, })

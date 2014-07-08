@@ -15,6 +15,7 @@ urlpatterns = patterns('',
     url(r'^broadcastchat/$', views.BroadcastChatView.as_view(), name='broadcast_chat'),
     url(r'^login/$', views.login_user),
     url(r'^logout/$', 'django.contrib.auth.views.logout', {'template_name': 'logged_out.html'}),
+    url(r'^register/$', views.register),
 
 	url(r'^$', views.index, name='index')
 )

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<head>
+    <title>Unchained: Register</title>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap-theme.min.css">
+    <link rel="stylesheet" type="text/css" href=" {{ STATIC_URL }}css/unchained.css">
+
+    <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("input[type=text], input[type=password]").addClass("form-control");
+            $("input[type=submit]").addClass("btn").addClass("btn-default");
+        });
+    </script>
+</head>
+<body>
+    <div id="uc_register_wrapper">
+        <div id="uc_login_header">
+            <h4>Create an account for unchained</h4>
+        </div>
+        <div id="uc_login_content">
+            <form action="" method="post">
+                <label class="label label-default">Username:</label>
+                {{ form.username }}<br>
+                <label class="label label-default">Password:</label>
+                {{ form.password1 }}<br>
+                <label class="label label-default">Password again:</label>
+                {{ form.password2 }}<br>
+                <div class="pull-right">
+                    <input type="submit" value="Register">
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
