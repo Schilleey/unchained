@@ -41,7 +41,7 @@ class BroadcastChatView(LoginRequiredMixin, TemplateView):
 
     def get(self, request, *args, **kwargs):
         username = self.request.user.username
-        RedisPublisher(facility='foobar', broadcast=True).publish_message(username + ': ' + 'Hello everybody')  # send a welcome message to everybody
+        RedisPublisher(facility='unchained', broadcast=True).publish_message(username + ': ' + 'Hello everybody')  # send a welcome message to everybody
         return super(BroadcastChatView, self).get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
@@ -66,7 +66,7 @@ class UserChatView(LoginRequiredMixin, TemplateView):
 
     @csrf_exempt
     def post(self, request, *args, **kwargs):
-        redis_publisher = RedisPublisher(facility='foobar', users=[request.POST.get('user'),request.user.username])
+        redis_publisher = RedisPublisher(facility='unchained', users=[request.POST.get('user')])
         redis_publisher.publish_message(request.POST.get('message'))
         return HttpResponse('OK')
 
@@ -83,7 +83,7 @@ class GroupChatView(LoginRequiredMixin, TemplateView):
 
     @csrf_exempt
     def post(self, request, *args, **kwargs):
-        redis_publisher = RedisPublisher(facility='foobar', groups=[request.POST.get('group')])
+        redis_publisher = RedisPublisher(facility='unchained', groups=[request.POST.get('group')])
         redis_publisher.publish_message(request.POST.get('message'))
         return HttpResponse('OK')
 

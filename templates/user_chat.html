@@ -2,7 +2,7 @@
 
 {% block control_panel %}
 
-    <h1>You are talking with '{{ chatpartner }}' now!</h1>
+    <h1 id="talkingh1">You are talking with '{{ chatpartner }}' now!</h1>
 
 
 	<input type="text" id="text_message" />
@@ -15,7 +15,7 @@
 <script type="text/javascript">
 	jQuery(document).ready(function($) {
 		var ws4redis = WS4Redis({
-			uri: '{{ WEBSOCKET_URI }}foobar?subscribe-user',
+			uri: '{{ WEBSOCKET_URI }}unchained?subscribe-user&publish-user&echo',
 			receive_message: receiveMessage,
 			heartbeat_msg: {{ WS4REDIS_HEARTBEAT }}
 		});
@@ -34,15 +34,19 @@
         });
 
 		// receive a message though the Websocket from the server
-		function receiveMessage(msg) {
-			$('#billboard').append('<br/>' + msg);
+		function receiveMessage(msg)
+        {
+			$('#billboard').append('<div id="chattextpartner">' + msg + '</div>');
+            $('#text_message').val('');
             $('#text_message').val('');
 		}
 
        var sendMessage = function(){
+            var msg = '{{ username }}' + ': ' + $('#text_message').val();
+           $('#billboard').append('<div id="chattextself">' + msg + '</div>');
 			$.post('{% url "user_chat" %}', {
 				user: '{{ chatpartner }}',
-				message:  '{{ username }}' + ': ' + $('#text_message').val()
+				message:  msg
 			});
     }
 	});

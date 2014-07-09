@@ -92,7 +92,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 )
 
 SESSION_ENGINE = 'redis_sessions.session'
-
 SESSION_REDIS_PREFIX = 'session'
 
 # URL that distinguishes websocket connections from normal requests
