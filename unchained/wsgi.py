@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/1.6/howto/deployment/wsgi/
 
 import os
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "unchained.settings")
+#os.environ.setdefault("DJANGO_SETTINGS_MODULE", "unchained.settings_production")
 
 # Look at settings.WSGI_APPLICATION
 # from django.core.wsgi import get_wsgi_application
