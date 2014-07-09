@@ -11,6 +11,6 @@ import os
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "unchained.settings")
 #os.environ.setdefault("DJANGO_SETTINGS_MODULE", "unchained.settings_production")
 
-# Look at settings.WSGI_APPLICATION
+# For production environment
 # from django.core.wsgi import get_wsgi_application
 # application = get_wsgi_application()
