@@ -121,6 +121,8 @@ def register(request):
             new_user = form.save()
             state = "Account created successfully! You will be redirected soon."
             redirect = 1
+        else:
+            state = "There are some errors in form, please fill out again..."
     else:
         form = UserCreationForm()
     return render_to_response("register.html",
