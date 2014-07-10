@@ -148,10 +148,10 @@ body, input {
 #uc_register_wrapper {
     margin-left: auto;
     margin-right: auto;
-    margin-top: 100px;
+    margin-top: 5.5%;
     padding: 0;
     width: 450px;
-    height: 380px;
+    height: 430px;
     border: 1px solid #3c3c3c;
     box-shadow: 5px 5px 3px #b8b8b8;
     position: relative;
@@ -172,7 +172,7 @@ body, input {
 #uc_login_pic {
     margin-left: auto;
     margin-right: auto;
-    margin-top: 150px;
+    margin-top: 5.5%;
     padding: 0;
     width: 500px;
     height: 100px;

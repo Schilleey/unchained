@@ -113,11 +113,16 @@ def login_user(request):
 
 
 def register(request):
+    state = "Please fill out the register form below..."
+    redirect = 0
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if form.is_valid():
             new_user = form.save()
-            return HttpResponseRedirect("/login/")
+            state = "Account created successfully! You will be redirected soon."
+            redirect = 1
     else:
         form = UserCreationForm()
-    return render(request, "register.html", {'form': form, })
+    return render_to_response("register.html",
+                              {'form': form, 'state': state, 'redirect': redirect},
+                              context_instance=RequestContext(request))
