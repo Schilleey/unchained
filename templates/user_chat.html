@@ -37,8 +37,6 @@
 		function receiveMessage(msg)
         {
 			$('#billboard').append('<div id="chattextpartner">' + msg + '</div>');
-            $('#text_message').val('');
-            $('#text_message').val('');
 		}
 
        var sendMessage = function(){
@@ -48,6 +46,7 @@
 				user: '{{ chatpartner }}',
 				message:  msg
 			});
+           $('#text_message').val('');
     }
 	});
 </script>
