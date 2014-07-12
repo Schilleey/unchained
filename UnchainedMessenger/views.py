@@ -53,7 +53,7 @@ class BroadcastChatView(LoginRequiredMixin, TemplateView):
         return context
 
 class UserChatView(LoginRequiredMixin, TemplateView):
-    template_name = 'user_chat.html';
+    template_name = 'user_chat.html'
 
     def get_context_data(self, **kwargs):
         user = self.request.user

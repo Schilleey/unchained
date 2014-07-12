@@ -2,11 +2,81 @@
 <head>
     <link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}lib/jquery-ui/jquery-ui.min.css">
     <link rel="stylesheet" type="text/css" href=" {{ STATIC_URL }}css/unchained.css">
 
-    <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}lib/jquery-ui/external/jquery/jquery.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}lib/jquery-ui/jquery-ui.min.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
 	<script type="text/javascript" src="{{ STATIC_URL }}js/ws4redis.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+
+            jQuery.fn.center = function() {
+                this.css("position","absolute");
+                this.css("top", ( $(document).height() - this.height() ) / 2 + "px");
+                this.css("left", ( $(document).width() - this.width() ) / 2 + "px");
+                return this;
+            };
+
+            var createUserChat = function(user) {
+                $('<div/>', {'class': 'chat-window-wrapper'}).append(
+                                $('<div/>', {'class': 'chat-window-title'}).append(
+                                        $('<h4/>', {'text': user})
+                                ),
+                                $('<div/>', {'class': 'chat-window-content'}).append(
+                                        $('<div/>', {'class': 'chat-window-output'}),
+                                        $('<textarea/>', {'class': 'chat-window-area',
+                                                            'keypress': function(e) {
+                                                                var code = e.keyCode || e.which;
+                                                                if(code == 13) {
+                                                                    var self = $(this);
+                                                                    sendMessage('{{ user }}', user, self.val());
+                                                                    $(this).siblings('.chat-window-output').append(
+                                                                            $('<div/>', {'text': self.val()})
+                                                                    );
+                                                                    self.val('').focus();
+                                                                    return false;
+                                                                }
+                                                            }
+                                                         })
+                                )
+                        )
+                .appendTo('#page-chat-windows')
+                .draggable({ cancel: ".chat-window-content" })
+                .center()
+                .fadeIn("fast");
+            };
+
+            var receiveMessage = function(data) {
+                console.log(data);
+                $(".chat-window-title > h4:contains("+data.split(':')[0]+")")
+                    .parent().next().find(".chat-window-output").append($('<div/>', {'text': data}));
+            };
+
+            var createWsConnection = function() {
+                var ws4redis = WS4Redis({
+                    uri: '{{ WEBSOCKET_URI }}unchained?subscribe-user',
+                    receive_message: receiveMessage,
+                    heartbeat_msg: {{ WS4REDIS_HEARTBEAT }}
+                });
+            };
+
+            var sendMessage = function(from, to, m) {
+                var msg = from + ': ' + m;
+                $.post('{% url "user_chat" %}', {
+                    user: to,
+                    message: msg
+                });
+            };
+
+            $(".user-chat-init").click(function() {
+               createUserChat(this.innerHTML);
+            });
+
+            createWsConnection();
+        });
+    </script>
 </head>
 
 <body>
@@ -16,23 +86,27 @@
         <!-- Sidebar -->
         <div id="sidebar-wrapper">
             <ul class="sidebar-nav">
+                <li><a href="/unchained/chat"><h3>Home</h3></a></li>
 
-            <li><a href="/unchained/chat"><h3>Home</h3></a></li>
+                <li><a href="/unchained/broadcastchat"><h3>Broadcast</h3></a></li>
 
-            <li><a href="/unchained/broadcastchat"><h3>Broadcast</h3></a></li>
+                <li><a href="/unchained/logout"><h3>Logout</h3></a></li>
 
-            <li><a href="/unchained/logout"><h3>Logout</h3></a></li>
-
-            <h3>Groups</h3>
-            {% for group in groups %}
-                <li><a href="/unchained/groupchat/{{ group.name }}">{{ group.name }}</a></li>
-            {% endfor %}
+                <h3>Groups</h3>
+                {% for group in groups %}
+                    <li><a href="/unchained/groupchat/{{ group.name }}">{{ group.name }}</a></li>
+                {% endfor %}
 
 
-            <h3>UserList</h3>
-            {% for user in users %}
-                <li><a href="/unchained/userchat/{{ user.username }}">{{ user.username }}</a></li>
-            {% endfor %}
+                <h3>UserList</h3>
+                {% for user in users %}
+                    <li><a href="/unchained/userchat/{{ user.username }}">{{ user.username }}</a></li>
+                {% endfor %}
+
+                <h3>TestChat</h3>
+                {% for user in users %}
+                    <li><a href="#" class="user-chat-init">{{ user.username }}</a></li>
+                {% endfor %}
             </ul>
         </div>
 
@@ -43,6 +117,8 @@
                 <h1>Django Unchained Messenger</h1>
 
             </div>
+
+            <div id="page-chat-windows"></div>
 
             <!-- Keep all page content within the page-content inset div! -->
             <div class="page-content inset">

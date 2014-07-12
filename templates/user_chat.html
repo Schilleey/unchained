@@ -26,11 +26,11 @@
 		});
 
         $('#text_message').keypress(function(e){
-        var code = e.keyCode || e.which;
-        if(code == 13)
-        {
-            sendMessage();
-        }
+            var code = e.keyCode || e.which;
+            if(code == 13)
+            {
+                sendMessage();
+            }
         });
 
 		// receive a message though the Websocket from the server
@@ -41,14 +41,14 @@
             $('#text_message').val('');
 		}
 
-       var sendMessage = function(){
+        var sendMessage = function () {
             var msg = '{{ username }}' + ': ' + $('#text_message').val();
-           $('#billboard').append('<div id="chattextself">' + msg + '</div>');
-			$.post('{% url "user_chat" %}', {
-				user: '{{ chatpartner }}',
-				message:  msg
-			});
-    }
+            $('#billboard').append('<div id="chattextself">' + msg + '</div>');
+            $.post('{% url "user_chat" %}', {
+                user: '{{ chatpartner }}',
+                message: msg
+            });
+        }
 	});
 </script>
 {% endblock script_panel %}
