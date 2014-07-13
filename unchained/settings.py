@@ -98,7 +98,8 @@ SESSION_REDIS_PREFIX = 'session'
 WEBSOCKET_URL = '/ws/'
 
 # Set the number of seconds each message shall persited
-WS4REDIS_EXPIRE = 3600
+# WS4REDIS_EXPIRE = 3600
+WS4REDIS_EXPIRE = -1
 
 WS4REDIS_HEARTBEAT = '--heartbeat--'
 

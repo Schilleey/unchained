@@ -20,9 +20,15 @@
             };
 
             var createUserChat = function(user) {
+                if($('.chat-window-title > h4:contains('+user+')').length) return;
                 $('<div/>', {'class': 'chat-window-wrapper'}).append(
                                 $('<div/>', {'class': 'chat-window-title'}).append(
-                                        $('<h4/>', {'text': user})
+                                        $('<h4/>', {'text': user}).append(
+                                            $('<span/>', {'class': 'glyphicon glyphicon-remove pull-right'})
+                                                    .on('click', function() {
+                                                        $(this).closest('div.chat-window-wrapper').remove();
+                                                    })
+                                        )
                                 ),
                                 $('<div/>', {'class': 'chat-window-content'}).append(
                                         $('<div/>', {'class': 'chat-window-output'}),
@@ -31,9 +37,11 @@
                                                                 var code = e.keyCode || e.which;
                                                                 if(code == 13) {
                                                                     var self = $(this);
-                                                                    sendMessage('{{ user }}', user, self.val());
+                                                                    sendUserMessage('{{ user }}', user, self.val());
                                                                     $(this).siblings('.chat-window-output').append(
-                                                                            $('<div/>', {'text': self.val()})
+                                                                            $('<div/>',
+                                                                              {'text': 'Ich: ' + self.val(),
+                                                                               'class': 'user-message-output'})
                                                                     );
                                                                     self.val('').focus();
                                                                     return false;
@@ -48,21 +56,30 @@
                 .fadeIn("fast");
             };
 
-            var receiveMessage = function(data) {
-                console.log(data);
+            var receiveUserMessage = function(data) {
                 $(".chat-window-title > h4:contains("+data.split(':')[0]+")")
-                    .parent().next().find(".chat-window-output").append($('<div/>', {'text': data}));
+                    .parent().next().find(".chat-window-output")
+                        .append($('<div/>', {'text': data, 'class': 'user-message-output'}));
             };
 
-            var createWsConnection = function() {
-                var ws4redis = WS4Redis({
-                    uri: '{{ WEBSOCKET_URI }}unchained?subscribe-user',
-                    receive_message: receiveMessage,
-                    heartbeat_msg: {{ WS4REDIS_HEARTBEAT }}
+            var receiveBroadcastMessage = function(data) {
+                console.log(data);
+                $("#page-chat-broadcast-output").append($('<div/>', {'text': data, 'class': 'bc-message-output'}));
+                $("#page-chat-broadcast-output").attr({
+                    scrollTop: $("#page-chat-broadcast-output").attr("scrollHeight")
                 });
             };
 
-            var sendMessage = function(from, to, m) {
+            var createWsConnection = function(url, receiveMessage) {
+                var ws4redis = WS4Redis({
+                    uri: '{{ WEBSOCKET_URI }}' + url,
+                    receive_message: receiveMessage,
+                    heartbeat_msg: {{ WS4REDIS_HEARTBEAT }}
+                });
+                return ws4redis;
+            };
+
+            var sendUserMessage = function(from, to, m) {
                 var msg = from + ': ' + m;
                 $.post('{% url "user_chat" %}', {
                     user: to,
@@ -70,11 +87,34 @@
                 });
             };
 
+            var sendBroadcastMessage = function() {
+                if($('#page-chat-broadcast-input-area').val().length) {
+                    var value = '{{ user }}' + ': ' + $('#page-chat-broadcast-input-area').val();
+                    bcws.send_message(value);
+                }
+            };
+
             $(".user-chat-init").click(function() {
                createUserChat(this.innerHTML);
             });
 
-            createWsConnection();
+            $("#page-chat-broadcast-input-area").on("keypress", function(e) {
+                var code = e.keyCode || e.which;
+                if(code == 13) {
+                    sendBroadcastMessage();
+                    $(this).val("").focus();
+                    return false;
+                }
+            });
+
+            $("#page-chat-broadcast-input-but").on("click", function() {
+                sendBroadcastMessage();
+                $('#page-chat-broadcast-input-area').val("").focus();
+                return false;
+            });
+
+            var uws = createWsConnection('unchained?subscribe-user&publish-user', receiveUserMessage);
+            var bcws = createWsConnection('unchained?subscribe-broadcast&publish-broadcast', receiveBroadcastMessage);
         });
     </script>
 </head>
@@ -119,6 +159,18 @@
             </div>
 
             <div id="page-chat-windows"></div>
+            <div id="page-chat-broadcast-toggle">
+                <i class="glyphicon glyphicon-chevron-right"></i>
+            </div>
+            <div id="page-chat-broadcast">
+                <div id="page-chat-broadcast-output"></div>
+                <div id="page-chat-broadcast-input">
+                    <textarea id="page-chat-broadcast-input-area" placeholder="Send a message"></textarea><br>
+                    <button type="button" id="page-chat-broadcast-input-but" class="btn btn-default pull-right">
+                        Send
+                    </button>
+                </div>
+            </div>
 
             <!-- Keep all page content within the page-content inset div! -->
             <div class="page-content inset">

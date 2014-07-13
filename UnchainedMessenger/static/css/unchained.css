@@ -1,6 +1,6 @@
 body{
     font-family: 'Helvetica Neue';
-    background: url(../images/djangowalkingmen.jpg) no-repeat center center fixed;
+    /* background: url(../images/djangowalkingmen.jpg) no-repeat center center fixed; */
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
@@ -216,8 +216,12 @@ body, input {
 .chat-window-title {
     background-color: #3c3c3c;
     color: #9acfea;
-    padding: 10px;
+    padding: 10px 10px 5px 10px;
     cursor: pointer;
+}
+
+.chat-window-title > h4 {
+    margin: 0;
 }
 
 .chat-window-output {
@@ -226,6 +230,12 @@ body, input {
     height: 300px;
     margin-bottom: 5px;
     overflow-y: auto;
+    padding: 5px;
+}
+
+.user-message-output {
+    width: 430px;
+    word-wrap: break-word;
 }
 
 .chat-window-area {
@@ -234,4 +244,53 @@ body, input {
     min-width: 440px;
     min-height: 74px;
     height: 80px;
+}
+
+#page-chat-broadcast {
+    width: 350px;
+    height: 100%;
+    border-left: 2px solid #cccccc;
+    right: 0;
+    top: 0;
+    position: absolute;
+}
+
+#page-chat-broadcast-output {
+    height: 85%;
+    width: 100%;
+    padding: 10px;
+    overflow-y: auto;
+    border-bottom: 2px solid #cccccc;
+}
+
+.bc-message-output {
+    width: 315px;
+    word-wrap: break-word;
+}
+
+#page-chat-broadcast-input {
+    height: 15%;
+    width: 100%;
+    padding: 10px;
+}
+
+#page-chat-broadcast-input-area {
+    width: 100%;
+    resize: none;
+}
+
+#page-chat-broadcast-input-but {
+    margin-top: 5px;
+}
+
+#page-chat-broadcast-toggle {
+    width: 30px;
+    height: 30px;
+    position: absolute;
+    font-size: 20px;
+    top: 5px;
+    right: 355px;
+    color: #cccccc;
+    border: 1px solid #cccccc;
+    text-align: center;
 }
