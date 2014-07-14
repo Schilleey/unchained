@@ -94,8 +94,19 @@
                 }
             };
 
-            $(".user-chat-init").click(function() {
+            $(".user-chat-init").on("click", function() {
                createUserChat(this.innerHTML);
+            });
+
+            $("#page-chat-broadcast-toggle").on("click", function() {
+                var toSlide = $("#page-chat-broadcast-wrapper");
+                var slideWidth = $("#page-chat-broadcast");
+                toSlide.animate({
+                    right: parseInt(toSlide.css('right')) == 0 ?
+                            -slideWidth.outerWidth() + "px" :
+                            0 + "px"
+                });
+                $(this).find("i").toggleClass("glyphicon-chevron-left glyphicon-chevron-right");
             });
 
             $("#page-chat-broadcast-input-area").on("keypress", function(e) {
@@ -128,8 +139,6 @@
             <ul class="sidebar-nav">
                 <li><a href="/unchained/chat"><h3>Home</h3></a></li>
 
-                <li><a href="/unchained/broadcastchat"><h3>Broadcast</h3></a></li>
-
                 <li><a href="/unchained/logout"><h3>Logout</h3></a></li>
 
                 <h3>Groups</h3>
@@ -137,13 +146,7 @@
                     <li><a href="/unchained/groupchat/{{ group.name }}">{{ group.name }}</a></li>
                 {% endfor %}
 
-
                 <h3>UserList</h3>
-                {% for user in users %}
-                    <li><a href="/unchained/userchat/{{ user.username }}">{{ user.username }}</a></li>
-                {% endfor %}
-
-                <h3>TestChat</h3>
                 {% for user in users %}
                     <li><a href="#" class="user-chat-init">{{ user.username }}</a></li>
                 {% endfor %}
@@ -159,16 +162,19 @@
             </div>
 
             <div id="page-chat-windows"></div>
-            <div id="page-chat-broadcast-toggle">
-                <i class="glyphicon glyphicon-chevron-right"></i>
-            </div>
-            <div id="page-chat-broadcast">
-                <div id="page-chat-broadcast-output"></div>
-                <div id="page-chat-broadcast-input">
-                    <textarea id="page-chat-broadcast-input-area" placeholder="Send a message"></textarea><br>
-                    <button type="button" id="page-chat-broadcast-input-but" class="btn btn-default pull-right">
-                        Send
-                    </button>
+
+            <div id="page-chat-broadcast-wrapper">
+                <div id="page-chat-broadcast-toggle">
+                    <i class="glyphicon glyphicon-chevron-right"></i>
+                </div>
+                <div id="page-chat-broadcast">
+                    <div id="page-chat-broadcast-output"></div>
+                    <div id="page-chat-broadcast-input">
+                        <textarea id="page-chat-broadcast-input-area" placeholder="Send a message"></textarea><br>
+                        <button type="button" id="page-chat-broadcast-input-but" class="btn btn-default pull-right">
+                            Send
+                        </button>
+                    </div>
                 </div>
             </div>
 
