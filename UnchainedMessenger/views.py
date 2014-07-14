@@ -83,8 +83,11 @@ class GroupChatView(LoginRequiredMixin, TemplateView):
 
     @csrf_exempt
     def post(self, request, *args, **kwargs):
-        redis_publisher = RedisPublisher(facility='unchained', groups=[request.POST.get('group')])
-        redis_publisher.publish_message(request.POST.get('message'))
+        groupname = request.POST.get('group')
+        username = request.user.username
+        redis_publisher = RedisPublisher(facility='unchained', groups=[groupname])
+        message = groupname + ':' + request.POST.get('message')
+        redis_publisher.publish_message(message)
         return HttpResponse('OK')
 
 
@@ -119,6 +122,7 @@ def register(request):
         form = UserCreationForm(request.POST)
         if form.is_valid():
             new_user = form.save()
+            new_user.groups = Group.objects.all()
             state = "Account created successfully! You will be redirected soon."
             redirect = 1
         else:

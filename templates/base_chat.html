@@ -56,6 +56,43 @@
                 .fadeIn("fast");
             };
 
+            var createGroupChat = function(group) {
+                if($('.chat-window-title > h4:contains('+group+')').length) return;
+                $('<div/>', {'class': 'chat-window-wrapper'}).append(
+                                $('<div/>', {'class': 'chat-window-title'}).append(
+                                        $('<h4/>', {'text': group}).append(
+                                            $('<span/>', {'class': 'glyphicon glyphicon-remove pull-right'})
+                                                    .on('click', function() {
+                                                        $(this).closest('div.chat-window-wrapper').remove();
+                                                    })
+                                        )
+                                ),
+                                $('<div/>', {'class': 'chat-window-content'}).append(
+                                        $('<div/>', {'class': 'chat-window-output'}),
+                                        $('<textarea/>', {'class': 'chat-window-area',
+                                                            'keypress': function(e) {
+                                                                var code = e.keyCode || e.which;
+                                                                if(code == 13) {
+                                                                    var self = $(this);
+                                                                    sendGroupMessage(' {{ user }} ', group, self.val());
+                                                                    $(this).siblings('.chat-window-output').append(
+                                                                            $('<div/>',
+                                                                              {'text': 'Ich: ' + self.val(),
+                                                                               'class': 'group-message-output'})
+                                                                    );
+                                                                    self.val('').focus();
+                                                                    return false;
+                                                                }
+                                                            }
+                                                         })
+                                )
+                        )
+                .appendTo('#page-chat-windows')
+                .draggable({ cancel: ".chat-window-content" })
+                .center()
+                .fadeIn("fast");
+            };
+
             var receiveUserMessage = function(data) {
                 $(".chat-window-title > h4:contains("+data.split(':')[0]+")")
                     .parent().next().find(".chat-window-output")
@@ -69,6 +106,15 @@
                     scrollTop: $("#page-chat-broadcast-output").attr("scrollHeight")
                 });
             };
+
+            var receiveGroupMessage = function(data){
+                if(data.split(':')[1] != '{{ user }}')
+                {
+                    $(".chat-window-title > h4:contains("+data.split(':')[0]+")")
+                        .parent().next().find(".chat-window-output")
+                            .append($('<div/>', {'text': data.split(':')[1]+':'+data.split(':')[2], 'class': 'group-message-output'}));
+                }
+            }
 
             var createWsConnection = function(url, receiveMessage) {
                 var ws4redis = WS4Redis({
@@ -87,6 +133,14 @@
                 });
             };
 
+            var sendGroupMessage = function(from, to, m) {
+                var msg = from + ': ' + m;
+                $.post('{% url "group_chat" %}', {
+                    group: to,
+                    message: msg
+                });
+            };
+
             var sendBroadcastMessage = function() {
                 if($('#page-chat-broadcast-input-area').val().length) {
                     var value = '{{ user }}' + ': ' + $('#page-chat-broadcast-input-area').val();
@@ -97,6 +151,18 @@
             $(".user-chat-init").on("click", function() {
                createUserChat(this.innerHTML);
             });
+
+            $(".group-chat-init").on("click", function() {
+               createGroupChat(this.innerHTML);
+            });
+
+            var sendGroupMessage = function(from, to, m){
+                var msg = from + ': ' + m;
+                $.post('/unchained/groupchat/', {
+                    group: to,
+                    message: m
+                });
+            }
 
             $("#page-chat-broadcast-toggle").on("click", function() {
                 var toSlide = $("#page-chat-broadcast-wrapper");
@@ -125,6 +191,7 @@
             });
 
             var uws = createWsConnection('unchained?subscribe-user&publish-user', receiveUserMessage);
+            var gws = createWsConnection('unchained?subscribe-group', receiveGroupMessage);
             var bcws = createWsConnection('unchained?subscribe-broadcast&publish-broadcast', receiveBroadcastMessage);
         });
     </script>
@@ -143,7 +210,7 @@
 
                 <h3>Groups</h3>
                 {% for group in groups %}
-                    <li><a href="/unchained/groupchat/{{ group.name }}">{{ group.name }}</a></li>
+                    <li><a href="#" class="group-chat-init">{{ group.name }}</a></li>
                 {% endfor %}
 
                 <h3>UserList</h3>
