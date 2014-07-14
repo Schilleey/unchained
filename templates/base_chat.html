@@ -108,7 +108,7 @@
             };
 
             var receiveGroupMessage = function(data){
-                if(data.split(':')[1] != '{{ user }}')
+                if(data.split(':')[1].trim() != '{{user}}')
                 {
                     $(".chat-window-title > h4:contains("+data.split(':')[0]+")")
                         .parent().next().find(".chat-window-output")
@@ -156,14 +156,6 @@
                createGroupChat(this.innerHTML);
             });
 
-            var sendGroupMessage = function(from, to, m){
-                var msg = from + ': ' + m;
-                $.post('/unchained/groupchat/', {
-                    group: to,
-                    message: m
-                });
-            }
-
             $("#page-chat-broadcast-toggle").on("click", function() {
                 var toSlide = $("#page-chat-broadcast-wrapper");
                 var slideWidth = $("#page-chat-broadcast");
@@ -194,6 +186,46 @@
             var gws = createWsConnection('unchained?subscribe-group', receiveGroupMessage);
             var bcws = createWsConnection('unchained?subscribe-broadcast&publish-broadcast', receiveBroadcastMessage);
         });
+
+        var addGroup = function(groupname)
+        {
+            $.post('{% url "add_group" %}', {
+				groupname: groupname
+			});
+        }
+
+        var addGroupView = function()
+        {
+                $('<div/>', {'class': 'chat-window-wrapper'}).append(
+                                $('<div/>', {'class': 'chat-window-title'}).append(
+                                        $('<h4/>', {'text': 'Groupname?'}).append(
+                                            $('<span/>', {'class': 'glyphicon glyphicon-remove pull-right'})
+                                                    .on('click', function() {
+                                                        $(this).closest('div.chat-window-wrapper').remove();
+                                                    })
+                                        )
+                                ),
+                                $('<div/>', {'class': 'chat-window-content'}).append(
+                                        $('<textarea/>', {'class': 'chat-window-area', 'id':'group-name-textarea'}),
+                                        $('<input/>', {'type': 'button' , 'value':'Create', 'class':'btn btn-default small', 'id':'create-group-btn'})
+                                )
+                        )
+                .appendTo('#page-chat-windows')
+                .draggable({ cancel: ".chat-window-content" })
+                .center()
+                .fadeIn("fast");
+                $('#create-group-btn').on('click', function (e) {
+                    groupname = $('#group-name-textarea').val();
+                    $.post('{% url "add_group" %}', {
+				    groupname: groupname,
+                    success: function(){
+                        $(this).closest('div.chat-window-wrapper').remove();
+                        document.location.reload(true);
+                    }
+			        });
+                });
+        }
+
     </script>
 </head>
 
@@ -212,6 +244,8 @@
                 {% for group in groups %}
                     <li><a href="#" class="group-chat-init">{{ group.name }}</a></li>
                 {% endfor %}
+
+            <input type="button" value="ADD" class="btn btn-default small" onclick="addGroupView()">
 
                 <h3>UserList</h3>
                 {% for user in users %}

@@ -90,6 +90,20 @@ class GroupChatView(LoginRequiredMixin, TemplateView):
         redis_publisher.publish_message(message)
         return HttpResponse('OK')
 
+class AddGroup(LoginRequiredMixin, TemplateView):
+
+    def post(self, request, *args, **kwargs):
+        groupname = request.POST.get('groupname')
+        if(groupname == ''):
+            return
+
+        users = User.objects.all()
+        newGroup = Group.objects.create(name = groupname)
+        newGroup.save()
+        savedGroup = Group.objects.get(name=groupname)
+        for user in users:
+            user.groups.add(savedGroup)
+        return HttpResponse('OK')
 
 def login_user(request):
     state = "Please log in below..."
@@ -113,7 +127,6 @@ def login_user(request):
     return render_to_response('login.html',
                               {'state':state, 'username': username, 'redirect': redirect},
                               context_instance=RequestContext(request))
-
 
 def register(request):
     state = "Please fill out the register form below..."
