@@ -19,11 +19,11 @@
                 return this;
             };
 
-            var createUserChat = function(user) {
-                if($('.chat-window-title > h4:contains('+user+')').length) return;
+            var createChat = function(target,type) {
+                if($('.chat-window-title > h4:contains('+target+')').length) return;
                 $('<div/>', {'class': 'chat-window-wrapper'}).append(
                                 $('<div/>', {'class': 'chat-window-title'}).append(
-                                        $('<h4/>', {'text': user}).append(
+                                        $('<h4/>', {'text': target}).append(
                                             $('<span/>', {'class': 'glyphicon glyphicon-remove pull-right'})
                                                     .on('click', function() {
                                                         $(this).closest('div.chat-window-wrapper').remove();
@@ -37,48 +37,11 @@
                                                                 var code = e.keyCode || e.which;
                                                                 if(code == 13) {
                                                                     var self = $(this);
-                                                                    sendUserMessage('{{ user }}', user, self.val());
+                                                                    sendMessage(' {{ user }} ', target, self.val(), type);
                                                                     $(this).siblings('.chat-window-output').append(
                                                                             $('<div/>',
                                                                               {'text': 'Ich: ' + self.val(),
-                                                                               'class': 'user-message-output'})
-                                                                    );
-                                                                    self.val('').focus();
-                                                                    return false;
-                                                                }
-                                                            }
-                                                         })
-                                )
-                        )
-                .appendTo('#page-chat-windows')
-                .draggable({ cancel: ".chat-window-content" })
-                .center()
-                .fadeIn("fast");
-            };
-
-            var createGroupChat = function(group) {
-                if($('.chat-window-title > h4:contains('+group+')').length) return;
-                $('<div/>', {'class': 'chat-window-wrapper'}).append(
-                                $('<div/>', {'class': 'chat-window-title'}).append(
-                                        $('<h4/>', {'text': group}).append(
-                                            $('<span/>', {'class': 'glyphicon glyphicon-remove pull-right'})
-                                                    .on('click', function() {
-                                                        $(this).closest('div.chat-window-wrapper').remove();
-                                                    })
-                                        )
-                                ),
-                                $('<div/>', {'class': 'chat-window-content'}).append(
-                                        $('<div/>', {'class': 'chat-window-output'}),
-                                        $('<textarea/>', {'class': 'chat-window-area',
-                                                            'keypress': function(e) {
-                                                                var code = e.keyCode || e.which;
-                                                                if(code == 13) {
-                                                                    var self = $(this);
-                                                                    sendGroupMessage(' {{ user }} ', group, self.val());
-                                                                    $(this).siblings('.chat-window-output').append(
-                                                                            $('<div/>',
-                                                                              {'text': 'Ich: ' + self.val(),
-                                                                               'class': 'group-message-output'})
+                                                                               'class': 'chat-message-output'})
                                                                     );
                                                                     self.val('').focus();
                                                                     return false;
@@ -94,9 +57,9 @@
             };
 
             var receiveUserMessage = function(data) {
-                $(".chat-window-title > h4:contains("+data.split(':')[0]+")")
+                $(".chat-window-title > h4:contains("+data.split(':')[0].trim()+")")
                     .parent().next().find(".chat-window-output")
-                        .append($('<div/>', {'text': data, 'class': 'user-message-output'}));
+                        .append($('<div/>', {'text': data, 'class': 'chat-message-output'}));
             };
 
             var receiveBroadcastMessage = function(data) {
@@ -112,7 +75,7 @@
                 {
                     $(".chat-window-title > h4:contains("+data.split(':')[0]+")")
                         .parent().next().find(".chat-window-output")
-                            .append($('<div/>', {'text': data.split(':')[1]+':'+data.split(':')[2], 'class': 'group-message-output'}));
+                            .append($('<div/>', {'text': data.split(':')[1]+':'+data.split(':')[2], 'class': 'chat-message-output'}));
                 }
             }
 
@@ -125,20 +88,22 @@
                 return ws4redis;
             };
 
-            var sendUserMessage = function(from, to, m) {
+            var sendMessage = function(from, to, m, type) {
                 var msg = from + ': ' + m;
-                $.post('{% url "user_chat" %}', {
-                    user: to,
-                    message: msg
-                });
-            };
-
-            var sendGroupMessage = function(from, to, m) {
-                var msg = from + ': ' + m;
-                $.post('{% url "group_chat" %}', {
-                    group: to,
-                    message: msg
-                });
+                if(type == "group")
+                {
+                    $.post('{% url "group_chat" %}', {
+                        group: to,
+                        message: msg
+                    });
+                }
+                if(type == "user")
+                {
+                    $.post('{% url "user_chat" %}', {
+                        user: to,
+                        message: msg
+                    });
+                }
             };
 
             var sendBroadcastMessage = function() {
@@ -149,11 +114,11 @@
             };
 
             $(".user-chat-init").on("click", function() {
-               createUserChat(this.innerHTML);
+               createChat(this.innerHTML,"user");
             });
 
             $(".group-chat-init").on("click", function() {
-               createGroupChat(this.innerHTML);
+               createChat(this.innerHTML,"group");
             });
 
             $("#page-chat-broadcast-toggle").on("click", function() {
@@ -279,18 +244,6 @@
                 </div>
             </div>
 
-            <!-- Keep all page content within the page-content inset div! -->
-            <div class="page-content inset">
-
-                {% block control_panel %}
-
-                {% endblock control_panel %}
-
-                {% block script_panel %}
-
-                {% endblock %}
-
-            </div>
         </div>
 
     </div>
