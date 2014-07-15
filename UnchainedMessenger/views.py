@@ -37,7 +37,6 @@ class BaseChatView(LoginRequiredMixin, TemplateView):
 
 
 class BroadcastChatView(LoginRequiredMixin, TemplateView):
-    template_name = 'broadcast_chat.html'
 
     def get(self, request, *args, **kwargs):
         username = self.request.user.username
@@ -53,7 +52,6 @@ class BroadcastChatView(LoginRequiredMixin, TemplateView):
         return context
 
 class UserChatView(LoginRequiredMixin, TemplateView):
-    template_name = 'user_chat.html'
 
     def get_context_data(self, **kwargs):
         user = self.request.user
@@ -72,7 +70,6 @@ class UserChatView(LoginRequiredMixin, TemplateView):
 
 
 class GroupChatView(LoginRequiredMixin, TemplateView):
-    template_name = 'group_chat.html'
 
     def get_context_data(self, **kwargs):
         context = super(GroupChatView, self).get_context_data(**kwargs)
