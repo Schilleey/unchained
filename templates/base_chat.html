@@ -47,7 +47,7 @@
                                                                     sendMessage(' {{ user }} ', target, self.val(), type);
                                                                     $(this).siblings('.chat-window-output').append(
                                                                             $('<div/>',
-                                                                              {'text': 'Ich: ' + self.val(),
+                                                                              {'text': 'Ich : ' + self.val(),
                                                                                'class': 'chat-message-output'})
                                                                     );
                                                                     self.val('').focus();
@@ -85,11 +85,17 @@
             };
 
             var receiveGroupMessage = function(data){
-                if(data.split(':')[1].trim() != '{{user}}')
+                 if(data.split(':')[1].trim() == '{{user}}')
+                    return;
+                var groupname = data.split(':')[0].trim();
+                if(groupname.length)
                 {
-                    $(".chat-window-title > h4:contains("+data.split(':')[0]+")")
-                        .parent().next().find(".chat-window-output")
-                            .append($('<div/>', {'text': data.split(':')[1]+':'+data.split(':')[2], 'class': 'chat-message-output'}));
+                    var groupchat = $(".chat-window-title > h4:contains("+groupname+")");
+                    if(!groupchat.length) {
+                        groupchat = createChat(groupname, "group");
+                    }
+                    groupchat.closest(".chat-window-wrapper").find(".chat-window-output")
+                    .append($('<div/>', {'text': data.split(':')[1]+':'+data.split(':')[2], 'class': 'chat-message-output'}));
                 }
             }
 
