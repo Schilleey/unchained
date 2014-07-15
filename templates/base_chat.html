@@ -147,6 +147,10 @@
                 return false;
             });
 
+            $("#groupOptions").on("click", function() {
+                addGroupView();
+            });
+
             var uws = createWsConnection('unchained?subscribe-user&publish-user', receiveUserMessage);
             var gws = createWsConnection('unchained?subscribe-group', receiveGroupMessage);
             var bcws = createWsConnection('unchained?subscribe-broadcast&publish-broadcast', receiveBroadcastMessage);
@@ -201,16 +205,14 @@
         <!-- Sidebar -->
         <div id="sidebar-wrapper">
             <ul class="sidebar-nav">
-                <li><a href="/unchained/chat"><h3>Home</h3></a></li>
+                <h3>Unchained Messenger</h3>
 
                 <li><a href="/unchained/logout"><h3>Logout</h3></a></li>
 
-                <h3>Groups</h3>
+                <h3>Groups <span id="groupOptions" class="glyphicon glyphicon-cog"></span></h3>
                 {% for group in groups %}
                     <li><a href="#" class="group-chat-init">{{ group.name }}</a></li>
                 {% endfor %}
-
-            <input type="button" value="ADD" class="btn btn-default small" onclick="addGroupView()">
 
                 <h3>UserList</h3>
                 {% for user in users %}
@@ -221,11 +223,6 @@
 
         <!-- Page content -->
         <div id="page-content-wrapper">
-            <div class="content-header">
-
-                <h1>Django Unchained Messenger</h1>
-
-            </div>
 
             <div id="page-chat-windows"></div>
 
