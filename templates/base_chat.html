@@ -19,14 +19,21 @@
                 return this;
             };
 
-            var createChat = function(target,type) {
-                if($('.chat-window-title > h4:contains('+target+')').length) return;
-                $('<div/>', {'class': 'chat-window-wrapper'}).append(
+            var createChat = function(target, type) {
+                if($('.chat-window-title > h4:contains('+target+')').length) {
+                    $('.chat-window-title > h4:contains('+target+')').closest('div.chat-window-wrapper').toggle();
+                    return;
+                }
+                var uchat = $('<div/>', {'class': 'chat-window-wrapper'}).append(
                                 $('<div/>', {'class': 'chat-window-title'}).append(
                                         $('<h4/>', {'text': target}).append(
                                             $('<span/>', {'class': 'glyphicon glyphicon-remove pull-right'})
                                                     .on('click', function() {
                                                         $(this).closest('div.chat-window-wrapper').remove();
+                                                    }),
+                                            $('<span/>', {'class': 'glyphicon glyphicon-minus pull-right'})
+                                                    .on('click', function() {
+                                                        $(this).closest('div.chat-window-wrapper').toggle();
                                                     })
                                         )
                                 ),
@@ -54,16 +61,23 @@
                 .draggable({ cancel: ".chat-window-content" })
                 .center()
                 .fadeIn("fast");
+
+                return uchat;
             };
 
             var receiveUserMessage = function(data) {
-                $(".chat-window-title > h4:contains("+data.split(':')[0].trim()+")")
-                    .parent().next().find(".chat-window-output")
-                        .append($('<div/>', {'text': data, 'class': 'chat-message-output'}));
+                var username = data.split(':')[0].trim();
+                if(username.length) {
+                    var userchat = $(".chat-window-title > h4:contains("+username+")");
+                    if(!userchat.length) {
+                        userchat = createChat(username, "user");
+                    }
+                    userchat.closest(".chat-window-wrapper").find(".chat-window-output")
+                            .append($('<div/>', {'text': data, 'class': 'chat-message-output'}));
+                }
             };
 
             var receiveBroadcastMessage = function(data) {
-                console.log(data);
                 $("#page-chat-broadcast-output").append($('<div/>', {'text': data, 'class': 'bc-message-output'}));
                 $("#page-chat-broadcast-output").attr({
                     scrollTop: $("#page-chat-broadcast-output").attr("scrollHeight")
